@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 export async function GET() {
   try {
     console.log("Testing RLS policies...");
-    
+
     // Test 1: Check if we can access headlines table at all
     const { data: basicAccess, error: basicError } = await supabaseAdmin
       .from("headlines")
@@ -55,7 +55,7 @@ export async function GET() {
     }
 
     // Test 4: Check table structure
-    const { data: tableInfo, error: tableError } = await supabaseAdmin
+    const { error: tableError } = await supabaseAdmin
       .from("headlines")
       .select("*")
       .limit(0);
@@ -65,8 +65,12 @@ export async function GET() {
       message: "RLS test successful",
       results: {
         basicAccess: basicAccess ? "✅ Working" : "❌ Failed",
-        publishedAccess: publishedAccess ? `✅ Working (${publishedAccess.length} found)` : "❌ Failed",
-        allAccess: allAccess ? `✅ Working (${allAccess.length} found)` : "❌ Failed",
+        publishedAccess: publishedAccess
+          ? `✅ Working (${publishedAccess.length} found)`
+          : "❌ Failed",
+        allAccess: allAccess
+          ? `✅ Working (${allAccess.length} found)`
+          : "❌ Failed",
         tableStructure: tableError ? "❌ Failed" : "✅ Working",
         publishedHeadlines: publishedAccess || [],
         allHeadlines: allAccess || [],

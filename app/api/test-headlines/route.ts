@@ -4,9 +4,9 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 export async function GET() {
   try {
     console.log("Testing headlines API...");
-    
+
     // Test 1: Check if headlines table exists and is accessible
-    const { data: tableTest, error: tableError } = await supabaseAdmin
+    const { error: tableError } = await supabaseAdmin
       .from("headlines")
       .select("count")
       .limit(1);
@@ -38,11 +38,12 @@ export async function GET() {
     }
 
     // Test 3: Try to get published headlines specifically
-    const { data: publishedHeadlines, error: publishedError } = await supabaseAdmin
-      .from("headlines")
-      .select("*")
-      .eq("status", "PUBLISHED")
-      .limit(5);
+    const { data: publishedHeadlines, error: publishedError } =
+      await supabaseAdmin
+        .from("headlines")
+        .select("*")
+        .eq("status", "PUBLISHED")
+        .limit(5);
 
     if (publishedError) {
       return NextResponse.json({

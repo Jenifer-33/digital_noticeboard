@@ -4,9 +4,9 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 export async function GET() {
   try {
     console.log("Testing database schema...");
-    
+
     // Test 1: Check if headlines table exists
-    const { data: headlinesTest, error: headlinesError } = await supabaseAdmin
+    const { error: headlinesError } = await supabaseAdmin
       .from("headlines")
       .select("id")
       .limit(1);
@@ -22,7 +22,7 @@ export async function GET() {
     }
 
     // Test 2: Check if users table exists
-    const { data: usersTest, error: usersError } = await supabaseAdmin
+    const { error: usersError } = await supabaseAdmin
       .from("users")
       .select("id")
       .limit(1);
@@ -38,7 +38,7 @@ export async function GET() {
     }
 
     // Test 3: Check if admin_invites table exists
-    const { data: invitesTest, error: invitesError } = await supabaseAdmin
+    const { error: invitesError } = await supabaseAdmin
       .from("admin_invites")
       .select("id")
       .limit(1);
@@ -54,15 +54,14 @@ export async function GET() {
     }
 
     // Test 4: Check storage buckets
-    const { data: buckets, error: bucketsError } = await supabaseAdmin.storage.listBuckets();
+    const { data: buckets, error: bucketsError } =
+      await supabaseAdmin.storage.listBuckets();
 
     if (bucketsError) {
       return NextResponse.json({
         success: false,
         error: "Storage buckets not accessible",
         details: bucketsError.message,
-        code: bucketsError.code,
-        hint: bucketsError.hint,
       });
     }
 
@@ -92,10 +91,7 @@ export async function GET() {
 
     // Clean up the test headline
     if (insertTest && insertTest[0]) {
-      await supabaseAdmin
-        .from("headlines")
-        .delete()
-        .eq("id", insertTest[0].id);
+      await supabaseAdmin.from("headlines").delete().eq("id", insertTest[0].id);
     }
 
     return NextResponse.json({
@@ -105,9 +101,11 @@ export async function GET() {
         headlinesTable: "✅ Working",
         usersTable: "✅ Working",
         adminInvitesTable: "✅ Working",
-        storageBuckets: buckets ? `✅ Working (${buckets.length} buckets)` : "❌ Failed",
+        storageBuckets: buckets
+          ? `✅ Working (${buckets.length} buckets)`
+          : "❌ Failed",
         insertTest: "✅ Working",
-        buckets: buckets?.map(b => b.name) || [],
+        buckets: buckets?.map((b) => b.name) || [],
       },
       timestamp: new Date().toISOString(),
     });

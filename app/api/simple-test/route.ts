@@ -5,7 +5,7 @@ export async function GET() {
     // Test 1: Check if we can import Supabase
     let importTest = "❌ Failed";
     try {
-      const { createClient } = await import("@supabase/supabase-js");
+      await import("@supabase/supabase-js");
       importTest = "✅ Success";
     } catch (err) {
       importTest = `❌ Import failed: ${
@@ -26,7 +26,7 @@ export async function GET() {
     let clientError = null;
     try {
       const { createClient } = await import("@supabase/supabase-js");
-      const supabase = createClient(
+      createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       );

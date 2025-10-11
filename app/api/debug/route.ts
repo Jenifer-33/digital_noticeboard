@@ -27,7 +27,7 @@ export async function GET() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
       );
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("headlines")
         .select("count")
         .limit(1);
