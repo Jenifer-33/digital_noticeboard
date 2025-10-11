@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Notice Board",
+  title: "CampusBoard",
   description:
     "A modern notice board application for managing and displaying headlines",
 };
