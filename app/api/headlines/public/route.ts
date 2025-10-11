@@ -22,14 +22,8 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Public headlines API error:", error);
       return NextResponse.json(
-        {
-          error: "Failed to fetch headlines",
-          details: error.message,
-          code: error.code,
-          hint: error.hint,
-        },
+        { error: "Failed to fetch headlines" },
         { status: 500 }
       );
     }

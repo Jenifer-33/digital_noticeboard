@@ -10,14 +10,8 @@ export async function GET() {
       .limit(1);
 
     if (error) {
-      console.error("Admin check API error:", error);
       return NextResponse.json(
-        {
-          error: "Failed to check admin status",
-          details: error.message,
-          code: error.code,
-          hint: error.hint,
-        },
+        { error: "Failed to check admin status" },
         { status: 500 }
       );
     }
