@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       "jrmn.s3.ap-south-1.amazonaws.com",
       "images.unsplash.com",
       "fykptqynmlmaggjvyyjj.supabase.co",
+        "izmnrdqjfnkskrtkxmyt.supabase.co",//extra added
       "placehold.co",
     ],
   },
