@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { supabaseClient as supabase } from "@/lib/supabase-client";
 import { useAuth } from "../../hooks/use-auth";
@@ -7,7 +6,7 @@ import { useAuth } from "../../hooks/use-auth";
 export const HeaderMenu = () => {
   const { user, signOut } = useAuth();
 
-  // ✅ Trigger display on Raspberry Pi (set show = true)
+  // ✅ Old function: Show slides (update Supabase)
   async function triggerPresent() {
     try {
       const { error } = await supabase
@@ -16,44 +15,56 @@ export const HeaderMenu = () => {
         .eq("id", 1);
 
       if (error) throw error;
-      alert("Display triggered successfully ✅");
+
+      // Navigate to PRESENT page like before
+      window.location.href = "/present";
     } catch (err: any) {
-      console.error("Error triggering display:", err.message);
+      console.error("Error:", err.message);
       alert("❌ Failed to trigger display");
     }
   }
 
-  // ✅ Stop display on Raspberry Pi (set show = false)
+  // ❗ TEMPORARY STOP FUNCTION (Pi server not added yet)
+  // Redirects to dashboard for now
   async function stopPresent() {
     try {
+      // Update Supabase to hide slides
       const { error } = await supabase
         .from("display_signal")
         .update({ show: false })
         .eq("id", 1);
 
       if (error) throw error;
-      alert("Display stopped successfully 🛑");
+
+      alert("🛑 Stop signal sent — Pi shutdown API will be connected later.");
+
+      // After stopping, go to dashboard
+      window.location.href = "/dashboard";
+
+      // ⛔ We will later replace this with:
+      // await fetch("http://PI_IP:5000/shutdown", { method: "POST" });
     } catch (err: any) {
-      console.error("Error stopping display:", err.message);
+      console.error("Error:", err.message);
       alert("❌ Failed to stop display");
     }
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center md:items-center space-x-4 sm:space-y-4 menu-links">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center space-x-4 sm:space-y-4 menu-links">
+
       {/* 🏠 Home */}
       <Link
         href="/"
-        className="inline-flex items-center px-4 mb-0 sm:mb-4 text-sm font-medium text-[#e66030] hover:border-b-2 focus:outline-none outline-none"
+        className="inline-flex items-center px-4 text-sm font-medium text-[#e66030]"
       >
         Home
       </Link>
 
-      {/* 🔐 Login */}
+      {/* 🔐 Admin Login */}
       {!user && (
         <Link
           href="/login"
-          className="inline-flex items-center px-4 mb-0 sm:mb-4 text-sm font-medium text-[#e66030] hover:border-b-2"
+          className="inline-flex items-center px-4 text-sm font-medium text-[#e66030]"
         >
           Admin Login
         </Link>
@@ -63,37 +74,33 @@ export const HeaderMenu = () => {
       {user && (
         <Link
           href="/dashboard"
-          className="inline-flex items-center px-4 mb-0 sm:mb-4 text-sm font-medium text-[#e66030] hover:border-b-2"
+          className="inline-flex items-center px-4 text-sm font-medium text-[#e66030]"
         >
           Dashboard
         </Link>
       )}
 
-      {/* 📺 PRESENT BUTTON */}
-      {user && (
-        <button
-          onClick={triggerPresent}
-          className="inline-flex items-center px-4 py-2 sm:mb-4 border border-transparent text-sm font-medium rounded-md bg-[#e66030] hover:border-b-2 outline-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-        >
-          📺 Present
-        </button>
-      )}
+      {/* 📺 PRESENT button (same as old one) */}
+      <button
+        onClick={triggerPresent}
+        className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-[#e66030] text-white"
+      >
+        📺 Present
+      </button>
 
-      {/* 🛑 STOP DISPLAY BUTTON */}
-      {user && (
-        <button
-          onClick={stopPresent}
-          className="inline-flex items-center px-4 py-2 sm:mb-4 border border-transparent text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white outline-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        >
-          🛑 Stop Display
-        </button>
-      )}
+      {/* 🛑 STOP button (redirects to dashboard for now) */}
+      <button
+        onClick={stopPresent}
+        className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md bg-red-600 text-white"
+      >
+        🛑 Stop
+      </button>
 
-      {/* 🚪 LOGOUT */}
+      {/* 🚪 Logout */}
       {user && (
         <button
           onClick={() => signOut()}
-          className="inline-flex cursor-pointer items-center px-4 mb-0 py-2 sm:mb-4 text-sm font-medium border border-transparent text-red-500 hover:border-2 rounded-md hover:border-red-500"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-500 border border-red-500 rounded-md"
         >
           Logout
         </button>

@@ -2,11 +2,13 @@
   "name": "notice-board",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
+  "scripts": { 
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dev": "set NEXT_DISABLE_TURBOPACK=1 && next dev"
+
+   
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -32,6 +34,8 @@
     "supabase": "^2.48.3",
     "uuid": "^13.0.0",
     "zod": "^4.1.12"
+    
+
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
