@@ -3,23 +3,12 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const cursor = searchParams.get("cursor");
-    const limit = parseInt(searchParams.get("limit") || "10");
-
-    let query = supabaseAdmin
+    // Fetch all published headlines
+    const { data, error } = await supabaseAdmin
       .from("headlines")
       .select("*")
       .eq("status", "PUBLISHED")
-      .order("published_date", { ascending: false })
-      .limit(limit + 1); // Get one extra to check if there are more
-
-    if (cursor) {
-      // For cursor-based pagination, we'll use published_date
-      query = query.lt("published_date", cursor);
-    }
-
-    const { data, error } = await query;
+      .order("published_date", { ascending: false });
 
     if (error) {
       return NextResponse.json(
@@ -28,14 +17,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const headlines = data || [];
-    const hasMore = headlines.length > limit;
-    const nextCursor = hasMore ? headlines[limit - 1]?.published_date : null;
-
     return NextResponse.json({
-      headlines: headlines.slice(0, limit),
-      nextCursor,
-      hasMore,
+      headlines: data || [],
     });
   } catch {
     return NextResponse.json(

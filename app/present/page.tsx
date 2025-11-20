@@ -17,11 +17,34 @@ export default function PresentPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // ✅ Enter fullscreen on load
   useEffect(() => {
-    fetchHeadlines();
     enterFullscreen();
   }, [enterFullscreen]);
 
+  // ✅ Fetch headlines and auto-refresh every 20 seconds
+  const fetchHeadlines = async () => {
+    try {
+      const response = await fetch("/api/headlines/public");
+      if (!response.ok) throw new Error("Failed to fetch headlines");
+
+      const data = await response.json();
+      setHeadlines(data.headlines || []);
+    } catch {
+      setError("Failed to load headlines");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHeadlines(); // initial fetch
+
+    const interval = setInterval(fetchHeadlines, 20000); // every 20 sec
+    return () => clearInterval(interval);
+  }, []);
+
+  // ✅ Slide navigation
   useEffect(() => {
     if (!isPlaying || headlines.length === 0) return;
 
@@ -32,20 +55,6 @@ export default function PresentPage() {
     return () => clearInterval(interval);
   }, [isPlaying, headlines.length]);
 
-  const fetchHeadlines = async () => {
-    try {
-      const response = await fetch("/api/headlines/public?limit=10");
-      if (!response.ok) throw new Error("Failed to fetch headlines");
-
-      const data = await response.json();
-      setHeadlines(data.headlines);
-    } catch {
-      setError("Failed to load headlines");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handlePlay = () => setIsPlaying(true);
   const handlePause = () => setIsPlaying(false);
   const handlePrevious = () => {
@@ -54,9 +63,7 @@ export default function PresentPage() {
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % headlines.length);
   };
-  const handleExit = () => {
-    router.push("/");
-  };
+  const handleExit = () => router.push("/");
 
   if (isLoading) {
     return (
